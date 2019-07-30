@@ -6,6 +6,6 @@ public interface HystrixRetryAdapter {
     public String getBackendResponse(boolean simulateretry, boolean simulateretryfallback);
 
 
-    public String getBackendResponseFallback(Throwable throwable);
+    public String getBackendResponseFallback(Throwable throwable, boolean simulateretry, boolean simulateretryfallback);
 
 }

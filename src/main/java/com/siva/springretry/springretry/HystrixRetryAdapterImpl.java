@@ -15,7 +15,7 @@ public class HystrixRetryAdapterImpl implements HystrixRetryAdapter {
     UserHystrixService userHystrixService;
 
     @Override
-    @Retryable(value = { RemoteServiceNotAvailableException.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(value = { RemoteServiceNotAvailableException.class }, maxAttemptsExpression = "#{${my.app.maxAttempts}}", backoff = @Backoff(delayExpression = "#{${my.app.backOffDelay}}"))
     public String getBackendResponse(boolean simulateretry, boolean simulateretryfallback){
         return userHystrixService.getBackendResponse(simulateretry, simulateretryfallback);
 
@@ -23,8 +23,9 @@ public class HystrixRetryAdapterImpl implements HystrixRetryAdapter {
 
     @Override
     @Recover
-    public String getBackendResponseFallback(Throwable throwable) {
+    public String getBackendResponseFallback(Throwable throwable, boolean simulateretry, boolean simulateretryfallback) {
         System.out.println("All retries completed, so Fallback method called!!!");
+        log.info("All retries completed, simulateretry {}, simulateretryfallback {}", simulateretry,simulateretryfallback);
         System.out.println("Error Class :: " + throwable.getClass().getName());
         return "All retries completed, so Fallback method called!!!";
     }
